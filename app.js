@@ -2,6 +2,7 @@ import {
     bot,
     coinglass,
     exchanges,
+    step,
     noiseThreshold,
     statsBTC,
     subscribers,
@@ -28,13 +29,20 @@ const getStats = async () => {
         .catch(err => console.error(err));
     return temp;
 }
+/*findOutlayers принимает список всех бирж, возвращает список интересующих бирж с коэффициентами срочности
+сперва фильтрует интересуемые биржи из exchanges
+затем определяет статистическую значимость изменений рэйтов по noiseThreshold
+затем вычисляет, насколько эти изменения срочны к реагированию по сетке с шагом step*/
 const findOutlayers = stats => {
     let temp = stats.exchangeList.filter(ex =>
         exchanges.has(ex.name)
-        && Math.abs(ex.longRate - statsBTC.exchangeList.find(e => e.name === ex.name)["longRate"]) >= noiseThreshold
     );
+    let isNoise = temp.reduce((res, o) => 
+    res && Math.abs(o.longRate - statsBTC.exchangeList.find(e => e.name === o.name)["longRate"]) < noiseThreshold 
+    , true);
+    if (isNoise) return [];
     temp.forEach(ex => {
-        let abs =  Math.floor(Math.abs(ex.longRate - 50) / 0.5);
+        let abs =  Math.floor(Math.abs(ex.longRate - 50) / step);
         ex.urgency = ex.longRate >= 50 ? abs : - abs;
     });
     return temp;
