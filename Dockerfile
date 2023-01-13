@@ -7,5 +7,6 @@ COPY --chown=node:node package*.json ./
 RUN npm ci --only=production
 COPY --chown=node:node src .
 
+EXPOSE 80
 USER node
 CMD ["dumb-init", "node", "app.js"]
