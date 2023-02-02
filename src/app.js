@@ -53,11 +53,11 @@ const prepareNotification = async (outlayers) => {
         //U+2705 check mark
         //U+274C cross mark
         let mark = urgency >= 0 ? '\u2705' : '\u274C';
-        return mark.repeat(Math.abs(urgency)) + ' ';
+        return mark.repeat(Math.abs(urgency));
     }
     const intro = 'За последние сутки:\n\n';
     const rates = outlayers.reduce((res, o) =>
-        res + `${visualize(o.urgency)}${o.name} long rate: ${o.longRate}\n`
+        res + `${visualize(o.urgency)} ${o.name} long rate: ${o.longRate}\n`
     , '');
     let price = '';
     await coinglass.perpetualMarket({symbol: 'BTC'})
@@ -70,9 +70,7 @@ const prepareNotification = async (outlayers) => {
     return intro + rates + price;
 }
 const setStatsBTC = newStats => {
-    for (let k in statsBTC) {
-        statsBTC[k] = newStats[k];
-    }
+    statsBTC = {...newStats}
 }
 
 
@@ -93,8 +91,8 @@ setInterval(async () => {
 
 bot.onText(/.+/, (msg) => {
     if (subscribers.indexOf(msg.chat.id) !== -1) {
-        bot.sendMessage(msg.chat.id, `Да, ${msg.from.first_name}, я работаю`);
-        return;
+        bot.sendMessage(msg.chat.id, `Да, ${msg.from.first_name}, я работаю`)
+        return
     }
-    bot.sendMessage(msg.chat.id, 'Администратор пока не счел нужным добавить вас');
+    bot.sendMessage(msg.chat.id, 'Администратор пока не счел нужным добавить вас')
 });
