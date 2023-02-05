@@ -13,7 +13,7 @@ import {
 
 
 const getStats = async () => {
-    let temp = {};
+    let temp = {}
     await coinglass.exchangeLongshortRatio({time_type: 'h24', symbol: 'BTC'})
         .then(({data}) => {
             temp.exchangeList = data.data[0].list.map(ex =>
@@ -21,14 +21,14 @@ const getStats = async () => {
                     longRate: ex.longRate,
                     name: ex.exchangeName,
                 })
-            );
+            )
             temp.exchangeList.push({
                 longRate: data.data[0].longRate,
                 name: "Mean",
-            });
+            })
         })
-        .catch(err => console.error(err));
-    return temp;
+        .catch(err => console.error(err))
+    return temp
 }
 /*findOutlayers принимает список всех бирж, возвращает список интересующих бирж с коэффициентами срочности
 сперва фильтрует интересуемые биржи из exchanges
@@ -70,7 +70,9 @@ const prepareNotification = async (outlayers) => {
     return intro + rates + price
 }
 const setStatsBTC = newStats => {
-    statsBTC = {...newStats}
+    for (let prop in newStats)
+        if (statsBTC.hasOwnProperty(prop))
+            statsBTC[prop] = newStats[prop]
 }
 
 
